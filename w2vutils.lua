@@ -17,9 +17,9 @@ end
 w2vutils.distance = function (self,vec,k)
 	local k = k or 1	
 	self.zeros = self.zeros or torch.zeros(self.M:size(1));
-	local distances = torch.addmv(self.zeros,self.M ,vec)
 	local norm = vec:norm(2)
-	distances:div(norm)
+	vec:div(norm)
+	local distances = torch.addmv(self.zeros,self.M ,vec)
 	distances , oldindex = torch.sort(distances,1,true)
 	local returnwords = {}
 	local returndistances = {}
