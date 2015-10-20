@@ -1,11 +1,10 @@
 torch.setdefaulttensortype('torch.FloatTensor')
 
-cmd = torch.CmdLine()
-cmd:text('Options')
-cmd:option('-binfilename','/home/rotmanmi/Data/GoogleNews-vectors-negative300.bin','Name of the bin file.')
-cmd:option('-outfilename','/home/rotmanmi/Data/word2vec.t7','Name of the output t7 file.')
-opt = cmd:parse(arg)
-w2vutils = {}
+opt = {
+	binfilename = '/home/rotmanmi/Data/GoogleNews-vectors-negative300.bin',
+	outfilename = '/home/rotmanmi/Data/word2vec.t7'
+}
+local w2vutils = {}
 if not paths.filep(opt.outfilename) then
 	w2vutils = require('bintot7.lua')
 else
@@ -16,10 +15,10 @@ end
 
 w2vutils.distance = function (self,vec,k)
 	local k = k or 1	
-	self.zeros = self.zeros or torch.zeros(self.M:size(1));
+	--self.zeros = self.zeros or torch.zeros(self.M:size(1));
 	local norm = vec:norm(2)
 	vec:div(norm)
-	local distances = torch.addmv(self.zeros,self.M ,vec)
+	local distances = torch.mv(self.M ,vec)
 	distances , oldindex = torch.sort(distances,1,true)
 	local returnwords = {}
 	local returndistances = {}
@@ -27,8 +26,13 @@ w2vutils.distance = function (self,vec,k)
 		table.insert(returnwords, w2vutils.v2wvocab[oldindex[i]])
 		table.insert(returndistances, distances[i])
 	end
-	return returndistances, returnwords
+	return {returndistances, returnwords}
 end
 
+w2vutils.word2vec = function (self,word)
+   local ind = self.w2vvocab[word]
+   assert(ind ~= nil, 'Word does not exist in the dictionary!')
+   return self.M[ind]
+end
 
 return w2vutils
