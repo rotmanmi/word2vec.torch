@@ -31,7 +31,9 @@ end
 
 w2vutils.word2vec = function (self,word,throwerror)
    local throwerror = throwerror or false
+   if word == 'of' then word = 'Of' end
    local ind = self.w2vvocab[word]
+   if ind == nil then return torch.Tensor(300):fill(0)
    if throwerror then
 		assert(ind ~= nil, 'Word does not exist in the dictionary!')
    end
