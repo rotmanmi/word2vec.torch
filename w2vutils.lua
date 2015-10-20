@@ -29,9 +29,12 @@ w2vutils.distance = function (self,vec,k)
 	return {returndistances, returnwords}
 end
 
-w2vutils.word2vec = function (self,word)
+w2vutils.word2vec = function (self,word,throwerror)
+   local throwerror = throwerror or false
    local ind = self.w2vvocab[word]
-   assert(ind ~= nil, 'Word does not exist in the dictionary!')
+   if throwerror then
+		assert(ind ~= nil, 'Word does not exist in the dictionary!')
+   end
    return self.M[ind]
 end
 
