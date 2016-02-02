@@ -35,6 +35,9 @@ w2vutils.word2vec = function (self,word,throwerror)
    if throwerror then
 		assert(ind ~= nil, 'Word does not exist in the dictionary!')
    end
+	if ind == nil then
+		ind = self.w2vvocab['UNK']
+	end
    return self.M[ind]
 end
 
